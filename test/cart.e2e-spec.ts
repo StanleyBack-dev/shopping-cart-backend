@@ -1,9 +1,9 @@
-import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 
 import { AppModule } from '../src/app.module';
-import { HttpExceptionFilter } from '../src/common/exceptions/http-exception.filter';
+import { configureApp } from '../src/bootstrap';
 
 /**
  * Exercises the full cart flow against a real, running Nest application.
@@ -19,9 +19,7 @@ describe('Cart (e2e)', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
-    app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-    app.useGlobalFilters(new HttpExceptionFilter());
+    configureApp(app);
     await app.init();
   });
 

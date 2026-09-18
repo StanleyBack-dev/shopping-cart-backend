@@ -7,6 +7,9 @@ Construída com **NestJS**, **TypeScript**, **Prisma ORM** e **PostgreSQL**, seg
 camadas / clean architecture (domínio → aplicação → infraestrutura → apresentação) por módulo, para que as regras
 de negócio fiquem independentes de detalhes de HTTP e persistência.
 
+🔗 **API em produção:** https://shopping-cart-backend-delta.vercel.app ([documentação Swagger](https://shopping-cart-backend-delta.vercel.app/docs))
+🖥️ **Frontend:** https://github.com/StanleyBack-dev/shopping-cart-frontend
+
 ## Stack utilizada
 
 - **NestJS 11** + **TypeScript** (strict)
@@ -147,6 +150,24 @@ Isso sobe um container PostgreSQL local e o container da API. Ao iniciar, o cont
 `prisma migrate deploy`, popula o catálogo (seed) e então inicia o servidor em `http://localhost:3000`. Para
 apontar o Docker Compose para o Neon em vez do Postgres local, defina `DATABASE_URL` no serviço `api` do
 `docker-compose.yml` com a connection string do Neon e remova a dependência do serviço `postgres`.
+
+## Deploy (Vercel)
+
+A API roda como uma função serverless única na Vercel (`api/index.ts`), com Nest usando o adapter do Express e
+`app.init()` no lugar de `app.listen()` — sem servidor de longa duração, cada requisição reaproveita a mesma
+instância do Nest entre invocações "quentes" da função. Um `vercel.json` reescreve todas as rotas para essa
+função, e `src/bootstrap.ts` centraliza a configuração (helmet, CORS, versionamento, pipes, filtro de exceção e
+Swagger) compartilhada entre `main.ts` (servidor tradicional) e `api/index.ts` (serverless).
+
+Detalhe importante: o compilador da Vercel para a função não resolve os path aliases do `tsconfig.json`
+(`@modules/*`, `@common/*`, etc.) — por isso `api/index.ts` importa o **build já compilado**
+(`dist/app.module.js`, `dist/bootstrap.js`, onde o `tsc-alias` já reescreveu os aliases para caminhos relativos)
+em vez do código-fonte TypeScript diretamente. O script `vercel-build` (`npm run build && prisma migrate deploy`)
+garante que esse build exista antes da Vercel empacotar a função, e também aplica as migrations pendentes no
+banco de produção a cada deploy.
+
+Variáveis configuradas no projeto da Vercel (ambiente Production): `DATABASE_URL` (connection string pooled do
+Neon de produção), `NODE_ENV=production`, `FRONTEND_URL` (origem do frontend, para o CORS).
 
 ## Variáveis de ambiente
 
