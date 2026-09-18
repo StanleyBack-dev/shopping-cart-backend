@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CartStatus {
+  OPEN
+  FINALIZED
+
+  @@map("cart_status")
+}
+
+model Product {
+  id            Int      @id @map("idtb_products")
+  description   String
+  netUnitPrice  Decimal  @db.Decimal(10, 2)
+  stockQuantity Int
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  cartItems CartItem[]
+
+  @@map("tb_products")
+}
+
+model Coupon {
+  id                 Int      @id @map("idtb_coupons")
+  code               String   @unique
+  discountPercentage Decimal  @db.Decimal(5, 2) @map("discount_percentage")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  carts Cart[]
+
+  @@map("tb_coupons")
+}
+
+model Cart {
+  id          String     @id @default(uuid()) @map("idtb_carts")
+  status      CartStatus @default(OPEN)
+  couponId    Int?       @map("idtb_coupons")
+  coupon      Coupon?    @relation(fields: [couponId], references: [id])
+  items       CartItem[]
+  finalizedAt DateTime?  @map("finalized_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  @@map("tb_carts")
+}
+
+// Only (cartId, productId) and quantity are persisted — unit price is always
+// read live from Product so the cart never drifts from the current catalog price.
+model CartItem {
+  id        String   @id @default(uuid()) @map("idtb_cart_items")
+  cartId    String   @map("idtb_carts")
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId Int      @map("idtb_products")
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([cartId, productId])
+  @@map("tb_cart_items")
+}
