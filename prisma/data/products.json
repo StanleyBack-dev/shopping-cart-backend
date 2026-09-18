@@ -1,0 +1,12 @@
+[
+  { "id": 1, "description": "Mouse Sem Fio", "netUnitPrice": 89.90, "stockQuantity": 20 },
+  { "id": 2, "description": "Teclado Mecânico", "netUnitPrice": 349.90, "stockQuantity": 15 },
+  { "id": 3, "description": "Hub USB-C 7 em 1", "netUnitPrice": 129.90, "stockQuantity": 30 },
+  { "id": 4, "description": "Fone de Ouvido com Cancelamento de Ruído", "netUnitPrice": 799.90, "stockQuantity": 12 },
+  { "id": 5, "description": "Monitor LED 27 Polegadas", "netUnitPrice": 1199.90, "stockQuantity": 8 },
+  { "id": 6, "description": "Webcam Full HD", "netUnitPrice": 199.90, "stockQuantity": 25 },
+  { "id": 7, "description": "Suporte de Alumínio para Notebook", "netUnitPrice": 99.90, "stockQuantity": 40 },
+  { "id": 8, "description": "SSD Externo 1TB", "netUnitPrice": 449.90, "stockQuantity": 18 },
+  { "id": 9, "description": "Caixa de Som Bluetooth Portátil", "netUnitPrice": 249.90, "stockQuantity": 22 },
+  { "id": 10, "description": "Cadeira de Escritório Ergonômica", "netUnitPrice": 1599.90, "stockQuantity": 5 }
+]
