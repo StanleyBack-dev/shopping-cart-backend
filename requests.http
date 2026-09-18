@@ -1,0 +1,101 @@
+### Shopping Cart API — example requests
+### Works with the "REST Client" VS Code extension or any compatible client.
+
+@baseUrl = http://localhost:3000/v1
+
+### Health check (version-neutral)
+GET http://localhost:3000/health
+
+### List the product catalog
+GET {{baseUrl}}/products
+
+### Get a single product
+GET {{baseUrl}}/products/1
+
+### List the available coupons
+GET {{baseUrl}}/coupons
+
+### Create a new, empty cart
+# @name createCart
+POST {{baseUrl}}/carts
+
+### Get a cart by id (replace {{cartId}} with the id returned above)
+@cartId = {{createCart.response.body.id}}
+GET {{baseUrl}}/carts/{{cartId}}
+
+### Add a product to the cart (enters with the requested quantity, defaults to 1)
+POST {{baseUrl}}/carts/{{cartId}}/items
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 2
+}
+
+### Add the same product again (sums onto the existing quantity)
+POST {{baseUrl}}/carts/{{cartId}}/items
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 1
+}
+
+### Try to add more than the available stock (treated error)
+POST {{baseUrl}}/carts/{{cartId}}/items
+Content-Type: application/json
+
+{
+  "productId": 5,
+  "quantity": 999
+}
+
+### Set the exact quantity of an existing item
+PATCH {{baseUrl}}/carts/{{cartId}}/items/1
+Content-Type: application/json
+
+{
+  "quantity": 5
+}
+
+### Remove an item from the cart
+DELETE {{baseUrl}}/carts/{{cartId}}/items/1
+
+### Apply a coupon
+POST {{baseUrl}}/carts/{{cartId}}/coupon
+Content-Type: application/json
+
+{
+  "code": "10OFF"
+}
+
+### Applying a second coupon replaces the first one (only one active at a time)
+POST {{baseUrl}}/carts/{{cartId}}/coupon
+Content-Type: application/json
+
+{
+  "code": "15OFF"
+}
+
+### Applying an unknown coupon returns a treated error
+POST {{baseUrl}}/carts/{{cartId}}/coupon
+Content-Type: application/json
+
+{
+  "code": "DOES-NOT-EXIST"
+}
+
+### Remove the applied coupon
+DELETE {{baseUrl}}/carts/{{cartId}}/coupon
+
+### Finalize (checkout) the cart
+POST {{baseUrl}}/carts/{{cartId}}/checkout
+
+### Any change attempted after checkout returns a treated error
+POST {{baseUrl}}/carts/{{cartId}}/items
+Content-Type: application/json
+
+{
+  "productId": 2,
+  "quantity": 1
+}
