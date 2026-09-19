@@ -6,11 +6,13 @@ FROM node:22-alpine
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+# The postinstall script below runs `prisma generate`, which needs the schema
+# present — copy it in before `npm ci`, ahead of the rest of the source.
+COPY prisma ./prisma
 RUN npm ci
 
 COPY . .
 
-RUN npx prisma generate
 RUN npm run build
 
 EXPOSE 3000
