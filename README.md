@@ -7,8 +7,8 @@ Construída com **NestJS**, **TypeScript**, **Prisma ORM** e **PostgreSQL**, seg
 camadas / clean architecture (domínio → aplicação → infraestrutura → apresentação) por módulo, para que as regras
 de negócio fiquem independentes de detalhes de HTTP e persistência.
 
-🔗 **API em produção:** https://shopping-cart-backend-delta.vercel.app ([documentação Swagger](https://shopping-cart-backend-delta.vercel.app/docs))
-🛒 **Loja em produção:** https://shopping-cart-frontend-two.vercel.app
+🔗 **API em produção:** https://api-shoppingcartest.vercel.app ([documentação Swagger](https://api-shoppingcartest.vercel.app/docs))
+🛒 **Loja em produção:** https://shoppingcartest.vercel.app
 🖥️ **Repositório do frontend:** https://github.com/StanleyBack-dev/shopping-cart-frontend
 
 ## Stack utilizada
